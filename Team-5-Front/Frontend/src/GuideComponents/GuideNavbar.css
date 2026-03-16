@@ -1,0 +1,232 @@
+/* ===========================
+   NAVBAR WRAPPER
+   =========================== */
+
+.div-nav {
+  background-color: transparent;
+  transition: 300ms ease-out;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 50;
+}
+
+/* ===========================
+   NAVBAR CONTAINER
+   =========================== */
+
+.GuideNavbar-Container {
+  width: 100%;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  padding-inline: clamp(24px, 8vw, 120px);
+  box-sizing: border-box;
+  background: transparent;
+  gap: 24px;
+  transition: background 0.25s ease;
+}
+
+.GuideNavbar-Container.scrolled {
+  background: #ffffff;
+}
+
+/* ===========================
+   LEFT SIDE
+   =========================== */
+
+#title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+#title h1 {
+  margin: 0;
+  color: var(--blue-color);
+}
+
+#title img {
+  width: 3.5rem;
+  height: 3.5rem;
+  object-fit: contain;
+}
+
+/* ===========================
+   RIGHT SIDE
+   =========================== */
+
+.right-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+#div-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ===========================
+   NAV BUTTONS
+   =========================== */
+
+.nav-item {
+  color: var(--blue-color);
+  text-decoration: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  font: inherit;
+}
+
+.GuideNavbar-Container:not(.scrolled) .nav-item:hover,
+.GuideNavbar-Container:not(.scrolled) .nav-item.active {
+  text-decoration: underline;
+}
+
+.GuideNavbar-Container.scrolled .nav-item:hover {
+  background: #eef2f6;
+}
+
+.GuideNavbar-Container.scrolled .nav-item.active:not(#homeButton) {
+  background: #eef2f6;
+  font-weight: 600;
+}
+
+/* ===========================
+   PROFILE AREA
+   =========================== */
+
+.profile-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Invisible bridge to keep hover active */
+.profile-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 100%;
+  height: 10px;
+}
+
+/* Profile tile */
+
+.profile-tile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.username {
+  color: var(--blue-color);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Avatar */
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #e6eef6;
+}
+
+.avatar.initials {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #e6eef6;
+  color: var(--blue-color);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===========================
+   DROPDOWN
+   =========================== */
+
+.profile-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+
+  min-width: 180px;
+
+  background: #ffffff;
+  border: 1px solid #e6eef6;
+  border-radius: 10px;
+
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+  padding: 8px;
+
+  opacity: 0;
+  visibility: hidden;
+
+  transform: translateY(-6px);
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+/* Keep dropdown open */
+.profile-wrapper:hover .profile-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* ===========================
+   DROPDOWN ITEMS
+   =========================== */
+
+.dropdown-item {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--blue-color);
+  font-size: 14px;
+}
+
+.dropdown-item:hover {
+  background: #eef2f6;
+}
+
+.dropdown-item.danger {
+  color: #b00020;
+}
+
+.dropdown-item.danger:hover {
+  background: #fdeaea;
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+
+@media (max-width: 600px) {
+  .username {
+    display: none;
+  }
+}

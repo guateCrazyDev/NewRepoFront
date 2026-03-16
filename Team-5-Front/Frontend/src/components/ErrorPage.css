@@ -1,0 +1,34 @@
+.ErrorPage-Container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 500px;
+  width: 400px;
+  border-radius: 8px;
+  color: var(--blue-color);
+  margin: 50px auto;
+  span {
+    margin-top: 10px;
+  }
+}
+
+.ErrorPage-Container h2 {
+  width: 80%;
+  margin: 0;
+  font-weight: 600;
+  font-size: 40px;
+}
+
+#Warning {
+  height: 200px;
+  width: 200px;
+  margin-top: 20px;
+}
+
+input,
+textarea,
+div {
+  caret-color: transparent;
+}

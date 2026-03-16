@@ -1,0 +1,190 @@
+
+.CategoryPage-Container {
+  --bg-image: url("https://img.goodfon.com/original/1920x1080/6/c8/ptitsy-flamingo-ozero-rozovyi-flamingo-zakat.jpg");
+  background-image:
+    linear-gradient(var(--overlay), var(--overlay)), var(--bg-image);
+  background-size: cover;
+  background-position: center;
+  min-height: 115vh;
+}
+
+.formCat{
+  margin-top: 280px;
+  margin-bottom: 240px;
+}
+
+.CategoryPage-Container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: linear-gradient(var(--overlay), var(--overlay)), var(--bg-image);
+  background-size: cover;
+  background-position: center;
+}
+
+.CategoryPage-Container form {
+  width: min(520px, 92vw); /* un poco más ancho que el login si quieres */
+  box-sizing: border-box;
+  padding: 28px 26px;
+  border-radius: var(--radius);
+  background: var(--glass);
+  backdrop-filter: blur(22px) saturate(120%);
+  -webkit-backdrop-filter: blur(22px) saturate(120%);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 14px;
+  animation: pop-in 0.35s ease-out both;
+}
+
+.CategoryPage-Container form h1 {
+  margin: 0;
+  font-weight: 800;
+  font-size: 1.2rem;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+  text-align: center;
+  font-family: "Verdana", Geneva, Tahoma, sans-serif;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 12px rgba(41, 113, 228, 0.25);
+}
+
+.CategoryPage-Container form input {
+  max-width: 100%;
+  height: 44px;
+  padding-left: 10px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.CategoryPage-Container form input::placeholder {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.CategoryPage-Container form input:focus {
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 4px rgba(109, 168, 254, 0.15);
+}
+
+.CategoryPage-Container form input:invalid {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* File input “bonito” */
+.fileLabel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  border-radius: var(--radius);
+  border: 1px dashed rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.fileLabel:hover {
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.fileInput {
+  display: none;
+}
+
+/* Previsualización de imagen */
+#preview {
+  width: 100%;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.06);
+  max-height: 220px;
+}
+
+#preview img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.CategoryPage-Container form button[type="submit"] {
+  height: 44px;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  transition: transform 0.08s ease, filter 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 6px 18px rgba(61, 139, 253, 0.35);
+}
+
+.CategoryPage-Container form button[type="submit"]:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 8px 22px rgba(61, 139, 253, 0.45);
+}
+
+.CategoryPage-Container form button[type="submit"]:active {
+  transform: translateY(1px);
+}
+
+.error {
+  margin-top: 6px;
+  border-radius: var(--radius);
+  display: flex;
+  justify-self: center;
+  justify-content: center;
+  height: 15px;
+  min-height: 15px;
+  width: 220px; /* un poco más ancho para textos de error */
+  background: rgba(255, 107, 107, 0.12);
+  border: 1px solid rgba(255, 107, 107, 0.45);
+  color: #ffe3e3;
+  font-size: 0.7rem;
+}
+
+#CreateAccount {
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  font-size: 15px;
+  color: #ffffffb8;
+}
+
+#icon {
+  width: 60px;
+  height: 60px;
+  top: -20px;
+}
+
+#image-container {
+  width: 100%;
+  height: 20px;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  justify-items: center;
+}
+
+@keyframes pop-in {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

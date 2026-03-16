@@ -1,0 +1,478 @@
+/* Backdrop */
+.pm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(9, 12, 20, 0.6);
+  backdrop-filter: blur(2px);
+  z-index: 999;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+/* Dialog */
+
+.pm-dialog {
+  width: min(1100px, 96vw);
+  height: min(86vh, 980px);
+  overflow: hidden;          /* 👈 clave: nada “sale” del recuadro */
+  display: grid;
+  grid-template-columns: 58% 42%;
+}
+
+
+/* Close */
+.pm-close {
+  position: absolute;
+  top: 10px; right: 10px;
+  height: 36px; width: 36px;
+  border: none; border-radius: 999px;
+  background: rgba(0,0,0,.5);
+  color: #fff; cursor: pointer;
+  z-index: 3;
+}
+.pm-close:hover { filter: brightness(1.1); }
+
+/* Izquierda: galería */
+.pm-left {
+  background: #0f1116; /* sin bordes, se mezcla con la imagen */
+  display: flex; flex-direction: column;
+}
+
+.pm-left,
+.pm-right {
+  min-height: 0;             /* 👈 evita que los hijos “fuerzen” la altura del grid cell */
+}
+
+.pm-gallery {
+  display: grid;
+  grid-template-rows: 1fr auto; /* main + thumbs */
+  height: 100%;
+}
+
+.pm-main {
+  position: relative;
+  width: 100%; height: 100%;
+}
+
+.pm-main-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; /* ocupa todo el grid */
+  display: block;
+}
+
+/* Controles de navegación en la imagen */
+.pm-nav {
+  position: absolute; top: 50%;
+  transform: translateY(-50%);
+  height: 38px; width: 38px;
+  border-radius: 999px; border: 1px solid rgba(255,255,255,.65);
+  background: rgba(0,0,0,.45); color: #fff;
+  display: grid; place-items: center;
+  cursor: pointer; z-index: 2;
+  box-shadow: 0 2px 8px rgba(0,0,0,.35);
+}
+.pm-nav:hover { filter: brightness(1.1); }
+.pm-nav.prev { left: 10px; }
+.pm-nav.next { right: 10px; }
+
+/* Thumbnails */
+.pm-thumbs {
+  display: flex; gap: 8px; padding: 10px 12px;
+  overflow-x: auto; background: transparent;
+}
+.pm-thumb {
+  flex: 0 0 88px; aspect-ratio: 16/10;
+  border: none; padding: 0; border-radius: 8px;
+  overflow: hidden; cursor: pointer;
+  background: rgba(255,255,255,.05);
+  outline: 1px solid rgba(255,255,255,.08);
+}
+.pm-thumb.active { outline: 2px solid #6da8fe; }
+.pm-thumb img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+
+/* Derecha: detalles + comentarios */
+.pm-right {
+  background: #111418;
+  color: #e9eef6;
+  display: flex; flex-direction: column;
+  height: 100%;
+}
+
+/* Cabecera */
+.pm-header {
+  padding: 16px 18px 8px 18px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.pm-title {
+  margin: 0 0 6px 0;
+  font-size: 1.25rem; font-weight: 800; letter-spacing: .2px;
+}
+.pm-meta {
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+  color: #b7c3d6;
+}
+.pm-chip {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  padding: 4px 8px; border-radius: 999px; font-size: .8rem;
+}
+.pm-chip.cat { color: #a6c8ff; border-color: rgba(109,168,254,.35); }
+.pm-sep { opacity: .5; }
+
+.pm-stars {
+  display: inline-flex; gap: 6px; align-items: center;
+  margin-top: 8px; color: #ffd166;
+  font-size: 1rem; letter-spacing: 1px;
+}
+.pm-stars-val { margin-left: 6px; color: #9fb2cc; font-size: .85rem; }
+
+/* Descripción */
+.pm-desc {
+  padding: 12px 18px 14px 18px;
+  color: #cbd7ea;
+  line-height: 1.45;
+}
+
+/* Comentarios (scroll) */
+.pm-comments {
+  margin-top: 4px;
+  padding: 0 12px 12px 12px;
+  overflow: hidden; /* el título se queda fijo arriba */
+  display: flex; flex-direction: column;
+  height: 100%;
+}
+.pm-comments-title {
+  margin: 0; padding: 10px 6px;
+  font-size: .95rem; font-weight: 700; color: #d9e3f3;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.pm-comments-list {
+  overflow: auto;
+  padding: 10px 6px 16px 6px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+
+/* Tarjeta de comentario (estilo IG) */
+.cmt-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-auto-rows: auto;
+  column-gap: 10px;
+  row-gap: 6px;
+  padding: 8px 6px;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+.cmt-header {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.cmt-avatar {
+  width: 34px; height: 34px; border-radius: 999px;
+  object-fit: cover; display: block;
+  border: 1px solid rgba(255,255,255,.2);
+}
+.cmt-avatar.fallback {
+  display: grid; place-items: center;
+  background: #243244; color: #dbe8ff; font-weight: 800;
+}
+
+.cmt-user {
+  display: flex; flex-direction: column; gap: 2px;
+}
+.cmt-username { font-weight: 700; }
+.cmt-sub {
+  display: flex; align-items: center; gap: 8px; color: #9fb2cc; font-size: .82rem;
+}
+.cmt-date { opacity: .8; }
+
+/* Texto del comentario */
+.cmt-text {
+  grid-column: 2 / -1;
+  color: #d7e5fb; line-height: 1.4;
+}
+
+/* Imágenes del comentario (si existen) */
+.cmt-pics {
+  grid-column: 2 / -1;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 6px; margin-top: 4px;
+}
+.cmt-pic {
+  width: 100%; aspect-ratio: 1/1; object-fit: cover;
+  border-radius: 8px; display: block;
+}
+
+/* Estados */
+.pm-status { padding: 12px 18px; color: #cbd7ea; }
+.pm-status.error { color: #ffb4b4; }
+
+/* Responsive */
+@media (max-width: 980px) {
+  .pm-dialog { grid-template-columns: 1fr; height: 92vh; }
+  .pm-right { height: 48vh; }
+  .pm-left { height: 44vh; }
+  .pm-thumbs { padding-bottom: 8px; }
+}
+
+/* ====== Barra para añadir comentario ====== */
+
+.pm-addbar {
+  margin-top: auto;
+  padding: 12px 12px 14px 12px;  /* un poco más de top padding */
+  border-top: 1px solid rgba(255,255,255,.06);
+  background: #101318;
+  overflow: visible;             /* 👈 evita recorte de sombras/redondeos */
+}
+
+
+.pm-addbtn {
+  height: 40px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.06);
+  color: #e9eef6;
+  border-radius: 10px;
+  padding: 0 14px;
+  cursor: pointer;
+  font-weight: 700;
+  width: 100%;
+  transition: filter .2s ease, background .2s ease, border-color .2s ease;
+}
+.pm-addbtn:hover {
+  filter: brightness(1.06);
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.28);
+}
+
+/* ====== Formulario expandido ====== */
+
+.pm-form {
+  display: grid;
+  gap: 10px;                     /* más separación entre filas */
+}
+
+
+.pm-form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pm-rate {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pm-rate-label {
+  color: #b9c7dd;
+  font-size: .9rem;
+}
+
+
+.pm-stars-input {
+  display: inline-flex;
+  flex-direction: row-reverse;     /* 5 .. 1 visualmente */
+  align-items: center;
+  gap: 4px;
+}
+
+.pm-stars-input input {
+  display: none;                   /* oculta radios */
+}
+
+.pm-stars-input label {
+  cursor: pointer;
+  font-size: 1.25rem;
+  color: #9fb2cc;                  /* base gris-azulado */
+  transition: transform .1s ease, color .2s ease;
+  line-height: 1;
+}
+
+/* Hover: pinta la estrella y todas las de la izquierda */
+.pm-stars-input label:hover,
+.pm-stars-input label:hover ~ label {
+  color: #ffd166;
+  transform: translateY(-1px);
+}
+
+/* Seleccionado: pinta desde la checked hacia la izquierda */
+.pm-stars-input input:checked ~ label {
+  color: #ffd166;
+}
+
+
+
+.pm-cancel {
+  border: none;
+  background: transparent;
+  color: #9fb2cc;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pm-cancel:hover { color: #d0def6; }
+
+/* Texto */
+
+.pm-textarea {
+  width: 100%;
+  min-height: 110px;             /* 👈 un poco más alto para evitar sensación de corte */
+  box-sizing: border-box;        /* 👈 asegura que padding cuente en total */
+  border-radius: 10px;
+  border: 1px solid rgba(109,168,254,.35);
+  background: rgba(255,255,255,.06);
+  color: #e9eef6;
+  padding: 12px 14px;            /* 👈 aumenta padding top */
+  line-height: 1.4;              /* 👈 evita que el texto “toque” el borde */
+  outline: none;
+  transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+  /* Si usabas un box-shadow/outline que se cortaba, se verá bien ahora */
+}
+
+
+.pm-textarea:focus {
+  border-color: rgba(109,168,254,.65);
+  box-shadow: 0 0 0 3px rgba(109,168,254,.18);
+  background: rgba(255,255,255,.08);
+}
+
+
+/* Adjuntos */
+.pm-uploader { display: grid; gap: 8px; }
+.pm-fileLabel {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 36px; border-radius: 10px; padding: 0 12px;
+  border: 1px dashed rgba(255,255,255,.35);
+  background: rgba(255,255,255,.06);
+  color: #e9eef6; cursor: pointer;
+}
+.pm-fileLabel:hover {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.45);
+}
+.pm-fileInput { display: none; }
+
+/* Previews: pequeñas y apaisadas */
+.pm-previews {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 8px;
+}
+.pm-previewItem {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+}
+.pm-previewItem img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+
+/* Submit */
+.pm-submit {
+  height: 40px;
+  border: none; border-radius: 10px;
+  background: linear-gradient(135deg, #6da8fe, #3d8bfd);
+  color: #fff; font-weight: 800; letter-spacing: .2px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(61, 139, 253, 0.35);
+}
+.pm-submit:disabled { opacity: .7; cursor: not-allowed; }
+.pm-submit:hover { filter: brightness(1.05); }
+
+
+
+
+
+
+
+
+
+.pm-gallery { min-height: 0; }
+.pm-main { min-height: 0; }
+.pm-main-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
+}
+
+/* Derecha: layout con scroll interno */
+.pm-right {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;             /* 👈 permite que el área scroll se calcule bien */
+}
+
+/* Cuerpo scroll: header + descripción + comentarios */
+.pm-right-body {
+  flex: 1 1 auto;
+  min-height: 0;             /* 👈 sin esto, el overflow no funciona */
+  overflow: auto;            /* 👈 scroll interno en la derecha */
+  display: block;
+}
+
+/* La barra de añadir comentario queda fija abajo de la derecha */
+.pm-addbar {
+  flex: 0 0 auto;
+  position: sticky;          /* opcional: si quieres que quede visible al hacer scroll largo */
+  bottom: 0;                 /* se “pega” al fondo de la columna derecha */
+  background: #101318;
+  border-top: 1px solid rgba(255,255,255,.06);
+  padding: 12px 12px 14px 12px;
+  z-index: 1;                /* sobre el área scroll */
+  overflow: visible;
+}
+
+/* Ajustes del textarea (por si había recorte) */
+.pm-textarea {
+  width: 100%;
+  min-height: 110px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 1px solid rgba(109,168,254,.35);
+  background: rgba(255,255,255,.06);
+  color: #e9eef6;
+  padding: 12px 14px;
+  line-height: 1.4;
+  outline: none;
+}
+
+/* Limitar el alto de los previews para NO empujar el layout */
+.pm-previews {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 8px;
+
+  max-height: 140px;         /* 👈 límite de alto */
+  overflow: auto;            /* 👈 scroll SOLO en el bloque de previews */
+  padding-right: 4px;        /* separa del borde para scrollbar */
+}
+
+/* Miniaturas apaisadas */
+.pm-previewItem {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+}
+.pm-previewItem img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+
+/* En mobile apilamos, pero seguimos evitando crecimiento inesperado */
+@media (max-width: 980px) {
+  .pm-dialog { grid-template-columns: 1fr; }
+  .pm-left { height: 44vh; min-height: 0; }
+  .pm-right { height: 48vh; min-height: 0; }
+  .pm-right-body { overflow: auto; }
+}

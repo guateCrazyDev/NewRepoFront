@@ -1,0 +1,15 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ocupa al menos el alto de la pantalla */
+}
+
+.content {
+  flex: 1; /* Esta es la clave: empuja el footer al fondo */
+}
+
+footer,
+.Contactbar {
+  flex-shrink: 0; /* Evita que el footer se deforme */
+  margin-top: auto; /* Empuje final hacia el fondo */
+}

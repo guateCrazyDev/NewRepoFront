@@ -1,0 +1,49 @@
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Rowdies:wght@300;400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Dancing+Script:wght@400..700&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Rowdies:wght@300;400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Dancing+Script:wght@400..700&family=Exo:ital,wght@0,100..900;1,100..900&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Rowdies:wght@300;400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=ABeeZee:ital@0;1&family=Caveat:wght@400..700&family=Dancing+Script:wght@400..700&family=Exo:ital,wght@0,100..900;1,100..900&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Rowdies:wght@300;400;700&display=swap");
+
+:root {
+  /*Navigation Vars*/
+  --link-hover: #efefef;
+  --white-color: #ffffff;
+  --blue-color: #222f47;
+  --cream-color: #f2f0f0;
+  --sand-color: #fcfaf7;
+
+  /*login Vars*/
+  --bg-image: url("../public/images/Test.jpg");
+  --overlay: rgba(0, 0, 0, 0.45);
+  --glass: rgba(0, 166, 255, 0.02);
+  --border: rgba(255, 255, 255, 0.25);
+  --text: #f5f7fb;
+  --muted: #d7def1;
+  --accent: #6ea8fe;
+  --accent-strong: #3d8bfd;
+  --danger: #ff6b6b;
+  --radius: 8px;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+
+  /* Fonts */
+  --font-nav: "Dancing Script", cursive;
+  --font-2: "Caveat", cursive;
+  --font-3: "Exo", sans-serif;
+  --font-4: "ABeeZee", sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Arial,
+    sans-serif;
+}

@@ -20,7 +20,7 @@ export default function Register() {
         navigate('/home', { replace: true })
         return
       } catch {
-        navigate('/login', { replace: true })
+        navigate('/', { replace: true })
         return
       }
     } catch (err) {
@@ -43,19 +43,23 @@ export default function Register() {
           autoComplete="username"
           required
         />
-
         <input
           type="password"
-          value={password}
+          name="password"
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          autoComplete="new-password"
           required
+          pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$"
+          placeholder="Password"
+          onInvalid={(e) => {
+            const msg = "Debe incluir: 1 minúscula, 1 mayúscula, 1 número, 1 carácter especial y mínimo 8 caracteres.";
+            e.target.setCustomValidity(msg);
+          }}
+          onInput={(e) => e.target.setCustomValidity("")}
         />
 
         {error && <div className="error">{error}</div>}
         <button type="submit">Register</button>
-        <Link id="Login" to="/login">
+        <Link id="Login" to="/">
           Already have an account?
         </Link>
       </form>

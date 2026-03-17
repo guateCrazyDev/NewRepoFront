@@ -5,7 +5,7 @@
     linear-gradient(var(--overlay), var(--overlay)), var(--bg-image);
   background-size: cover;
   background-position: center;
-  min-height: 140vh;
+  min-height: 180vh;
 }
 
 .formCat{
@@ -245,4 +245,25 @@
     --thumb-h: 78px;
     gap: 8px;
   }
+}
+
+
+.textareaDesc {
+  width: 100%;
+  min-height: 110px;                 /* controla altura mínima */
+  resize: vertical;                  /* permite al usuario estirar */
+  padding: 12px 14px;
+  line-height: 1.4;
+  border-radius: 10px;
+  border: 1px solid rgba(109,168,254,.35);
+  background: rgba(255,255,255,.06);
+  color: #e9eef6;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+.textareaDesc:focus {
+  border-color: rgba(109,168,254,.65);
+  box-shadow: 0 0 0 3px rgba(109,168,254,.18);
+  background: rgba(255,255,255,.08);
 }

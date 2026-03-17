@@ -1,29 +1,29 @@
 import "./GridTemplate.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useMemo, useState, useEffect } from "react";
+import {
+  getRole,
+} from '../storage/StorageService'
 import { chargeCategories } from "/src/service/CategoryService";
 
-// --- Helpers: slug y conversión de bytes a base64 ---
 const slugify = (s = "") =>
   s
     .toLowerCase()
-    .normalize("NFD") // quita acentos
+    .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
 
 function bytesToBase64(bytes) {
   if (!bytes) return null;
-  // Si ya viene como string (posible base64)
   if (typeof bytes === "string") {
     return bytes;
   }
 
-  // Si viene como array (JSON), conviértelo a Uint8Array
   try {
     const arr = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
     let binary = "";
-    const chunkSize = 0x8000; // evita stack overflow con apply
+    const chunkSize = 0x8000;
     for (let i = 0; i < arr.length; i += chunkSize) {
       const chunk = arr.subarray(i, i + chunkSize);
       binary += String.fromCharCode.apply(null, chunk);
@@ -36,50 +36,37 @@ function bytesToBase64(bytes) {
 }
 
 function GridTemplate() {
-  const [images, setCategories] = useState([]); // {id,title,description,url,slug}
-  const [showButton, setMostrarBoton] = useState(false);
+  const [images, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
   const navigate = useNavigate();
+  const isAdmin = getRole() === "ADMIN";
 
-  // Parámetros de grid
   const COLS = 4;
   const ROW_UNIT = 1;
 
-  const goToFormCategory = () => {
-    // Corrijo el doble slash por si acaso
-    navigate("/home/CForm", { state: { from: "home" } });
-  };
-
   useEffect(() => {
-    // Rol ADMIN muestra botón
-    if (localStorage.getItem("Role") === "ADMIN") {
-      setMostrarBoton(true);
-    }
 
-    // Carga categorías desde el backend
     (async () => {
       try {
         setLoading(true);
         setLoadError("");
 
         const resp = await chargeCategories();
-        // Permite tanto resp.data como resp si el servicio ya devuelve el array
         const raw = Array.isArray(resp) ? resp : resp?.data || [];
 
         const mapped = raw.map((c, idx) => {
           const base64 = bytesToBase64(c?.img);
-          // Si tienes contentType en backend, úsalo aquí; de momento asumimos JPEG
           const mime = "image/jpeg";
           const url = base64
             ? base64.startsWith("data:")
-              ? base64 // ya viene como dataURL completo
+              ? base64 
               : `data:${mime};base64,${base64}`
-            : ""; // sin imagen
+            : "";
 
           const title = c?.categoryName || "Category";
           return {
-            id: c?.id ?? idx, // usa id real si existe, o índice como fallback
+            id: c?.id ?? idx,
             url,
             title,
             description: c?.description || "",
@@ -101,7 +88,6 @@ function GridTemplate() {
     })();
   }, []);
 
-  // --- Paleta de tamaños según cantidad ---
   const buildSizePalette = (n) => {
     if (n <= 6) {
       return [
@@ -118,7 +104,6 @@ function GridTemplate() {
         { w: 1, h: 1 * ROW_UNIT },
       ];
     }
-    // muchos elementos: compacto
     return [
       { w: 1, h: 2 * ROW_UNIT },
       { w: 2, h: 1 * ROW_UNIT },
@@ -129,7 +114,6 @@ function GridTemplate() {
 
   const PALETTE = useMemo(() => buildSizePalette(images.length), [images.length]);
 
-  // --- utilidades para "packing" ---
   const ensureRows = (grid, rows, cols) => {
     while (grid.length < rows) grid.push(new Array(cols).fill(false));
   };
@@ -151,12 +135,11 @@ function GridTemplate() {
         grid[i][j] = true;
       }
     }
-    // CSS grid es 1-based
     return { rowStart: r + 1, colStart: c + 1, rowSpan: h, colSpan: w };
   };
 
   const getMinGapWidth = (grid, cols) => {
-    if (grid.length === 0) return cols; // todo libre
+    if (grid.length === 0) return cols;
     let minGap = cols;
     for (let r = 0; r < grid.length; r++) {
       let run = 0;
@@ -175,7 +158,6 @@ function GridTemplate() {
 
   const chooseAdaptiveSize = (index, minGap) => {
     const base = PALETTE[index % PALETTE.length];
-    // evita w=3 en grilla de 4 col
     let w = Math.min(base.w, 2);
     let h = base.h;
 
@@ -231,7 +213,6 @@ function GridTemplate() {
     return placed;
   }, [images, COLS, PALETTE]);
 
-  // Placeholder en caso de no tener imagen
   const placeholder =
     "data:image/svg+xml;utf8," +
     encodeURIComponent(
@@ -254,7 +235,7 @@ function GridTemplate() {
         <h2>Categories</h2>
       </div>
 
-      {loading && <div className="status">Cargando categorías…</div>}
+      {loading && <div className="status">Loading Categories…</div>}
       {loadError && <div className="status error">{loadError}</div>}
 
       <div className="gridContainer">
@@ -266,7 +247,20 @@ function GridTemplate() {
               gridColumn: `${item.colStart} / span ${item.colSpan}`,
               gridRow: `${item.rowStart} / span ${item.rowSpan}`,
             }}
-          >
+          > 
+          {isAdmin && (
+            <button
+              className="edit-category-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                console.log("Edit category:");
+                // luego puedes navegar a:
+                // navigate(`/home/CForm/${category.id}`)
+              }}
+            >
+              ✎ Edit Category
+            </button>
+          )}
             <Link to={`/places/${item.title}`}>
               <img
                 src={item.url || placeholder}

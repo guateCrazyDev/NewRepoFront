@@ -27,14 +27,9 @@ export async function createPlaceRequest(categoryData, files,catName) {
         throw new Error("`files` must be a File or an array of File");
     }
 
-
-  console.log(catName,categoryData,files);
-
   const resp = await api.post("/place", formData, {
     headers: { "Content-Type": "multipart/form-data" }
   });
-  
-  console.log(resp);
 
   return resp;
 }

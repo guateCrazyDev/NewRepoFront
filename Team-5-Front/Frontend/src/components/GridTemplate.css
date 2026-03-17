@@ -269,3 +269,25 @@
   outline: 2px solid #22c55e;   /* focus accesible */
   outline-offset: 2px;
 }
+
+
+.edit-category-btn {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.edit-category-btn:hover {
+  background: rgba(0, 0, 0, 0.9);
+}

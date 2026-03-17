@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState, useCallback, Fragment } from "react";
 import { chargePlaceUnique } from "/src/service/PlaceService";
+import { createCommentRequest } from "/src/service/CommentService";
+import {
+  getUser
+} from '../storage/StorageService'
 import "./PlaceModal.css";
+import { getImgProfile } from "../service/AuthService";
 
 const BASE_URL = "http://localhost:8080";
 
@@ -54,17 +59,13 @@ const fmtDate = (d) => {
   }
 };
 
-function Avatar({ user }) {
-  const src =
-    user?.avatarUrl ||
-    (typeof user?.avatar === "string" ? user.avatar : null) ||
-    "";
-  const username = user?.username || user?.name || "user";
-  const initial = (username?.[0] || "U").toUpperCase();
+function Avatar( userp ) {
+  const src = userp.user;
+  const initial = (getUser()?.[0] || "U").toUpperCase();
   return src ? (
-    <img className="cmt-avatar" src={src} alt={username} />
+    <img className="cmt-avatar" src={src} alt={getUser()} />
   ) : (
-    <div className="cmt-avatar fallback" aria-label={username}>
+    <div className="cmt-avatar fallback" aria-label={getUser()}>
       {initial}
     </div>
   );
@@ -74,18 +75,14 @@ export default function PlaceModal({ isOpen, placeName, onClose }) {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [data, setData] = useState(null);
-
-  // galería
   const [idx, setIdx] = useState(0);
-
-  // ===== Nuevo: estado del formulario de comentario
+  const [expandedImg, setExpandedImg] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [cText, setCText] = useState("");
   const [cRate, setCRate] = useState(5);
-  const [cFiles, setCFiles] = useState([]);     // File[]
-  const [cPrev, setCPrev] = useState([]);       // string[] (blob URLs)
+  const [cFiles, setCFiles] = useState([]);
+  const [cPrev, setCPrev] = useState([]);
   const [submitting, setSubmitting] = useState(false);
-  // ==============================================
 
   const images = useMemo(() => {
     const arr = Array.isArray(data?.picturesPlace)
@@ -139,49 +136,53 @@ export default function PlaceModal({ isOpen, placeName, onClose }) {
     return () => {
       document.removeEventListener("keydown", handleKey);
       document.documentElement.style.overflow = "";
-      // liberar previews al cerrar
       cPrev.forEach((u) => URL.revokeObjectURL(u));
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
-  // ===== Nuevo: handlers del form =====
   const onFilesChange = (e) => {
     const files = Array.from(e.target.files || []);
-    // liberar anteriores
     cPrev.forEach((u) => URL.revokeObjectURL(u));
     const urls = files.map((f) => URL.createObjectURL(f));
     setCFiles(files);
     setCPrev(urls);
   };
 
+  function getCurrentDateISO() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Mes empieza en 0
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   const onSubmitComment = async (e) => {
     e.preventDefault();
     if (!cText.trim()) return;
 
-    // TODO: Integrar a tu backend de comentarios
-    // Ejemplo de FormData si tienes endpoint:
-    // const fd = new FormData();
-    // fd.append("placeName", data.name);
-    // fd.append("text", cText.trim());
-    // fd.append("rate", String(cRate));
-    // cFiles.forEach(f => fd.append("pics", f));
-    // await api.post("/comment", fd);
+    const commentPayload = {
+      text: cText.trim(),
+      date: getCurrentDateISO(),
+      rate : cRate,
+    };
 
     try {
       setSubmitting(true);
-
-      // ✅ Actualización optimista: agregamos al inicio
+      const resp = await createCommentRequest(commentPayload,cFiles,data.name,getUser());
       const optimistic = {
         text: cText.trim(),
         rate: Number(cRate),
         date: new Date().toISOString(),
-        picComms: cFiles.map((f, i) => ({ path: cPrev[i] })), // usa previews locales
+        picComms: resp.data,
         user: {
-          username: "you", // cámbialo por el usuario real si lo tienes
-          avatarUrl: "",   // idem
+          username: getUser(),
+          avatarUrl: getImgProfile(),
         },
+        profilePath: getImgProfile(),
+        userName: getUser(),
       };
+
+      console.log(resp);
 
       setData((prev) =>
         prev
@@ -189,7 +190,6 @@ export default function PlaceModal({ isOpen, placeName, onClose }) {
           : prev
       );
 
-      // limpiar form
       setCText("");
       setCRate(5);
       setCFiles([]);
@@ -203,7 +203,6 @@ export default function PlaceModal({ isOpen, placeName, onClose }) {
       setSubmitting(false);
     }
   };
-  // ====================================
 
   if (!isOpen) return null;
 
@@ -212,7 +211,6 @@ export default function PlaceModal({ isOpen, placeName, onClose }) {
       <div className="pm-dialog" onClick={(e) => e.stopPropagation()}>
         <button className="pm-close" onClick={onClose} aria-label="Close">✕</button>
 
-        {/* IZQUIERDA: Galería */}
         <div className="pm-left">
           <div className="pm-gallery">
             <div className="pm-main">
@@ -259,7 +257,6 @@ export default function PlaceModal({ isOpen, placeName, onClose }) {
           </div>
         </div>
 
-        {/* DERECHA: Detalles + comentarios + (nuevo) form */}
         <div className="pm-right">
         <div className="pm-right-body">
           {loading && <div className="pm-status">Loading…</div>}
@@ -279,7 +276,7 @@ export default function PlaceModal({ isOpen, placeName, onClose }) {
               </header>
 
               <p className="pm-desc">
-                {data.description || data.location || ""}
+                {data.description || data.description || ""}
               </p>
 
               <section className="pm-comments">
@@ -288,10 +285,10 @@ export default function PlaceModal({ isOpen, placeName, onClose }) {
                   {(data.comments || []).map((cmt, i) => (
                     <article key={i} className="cmt-item">
                       <div className="cmt-header">
-                        <Avatar user={cmt.user} />
+                        <Avatar user={formatImagePath(cmt.profilePath)} />
                         <div className="cmt-user">
                           <div className="cmt-username">
-                            {cmt?.user?.username || cmt?.user?.name || "user"}
+                            {cmt?.userName || "user"}
                           </div>
                           <div className="cmt-sub">
                             <Stars value={Number(cmt.rate || 0)} />
@@ -304,18 +301,26 @@ export default function PlaceModal({ isOpen, placeName, onClose }) {
 
                       {Array.isArray(cmt.picComms) && cmt.picComms.length > 0 && (
                         <div className="cmt-pics">
-                          {cmt.picComms.map((p, k) => {
-                            const src = formatImagePath(p) || p?.path || "";
-                            return (
-                              <img
-                                key={k}
-                                src={src}
-                                alt="comment pic"
-                                className="cmt-pic"
-                                loading="lazy"
-                              />
-                            );
-                          })}
+                {cmt.picComms.map((p, k) => {
+                  const rawPath =
+                    typeof p === "string"
+                      ? p
+                      : p?.path || "";
+
+                  const src = rawPath.startsWith("blob:")
+                    ? rawPath
+                    : formatImagePath(rawPath);
+                  return (
+                    <img
+                      key={k}
+                      src={src}
+                      alt="comment pic"
+                      className="cmt-pic"
+                      loading="lazy"
+                      onClick={() => setExpandedImg(src)}
+                    />
+                  );
+                })}
                         </div>
                       )}
                     </article>
@@ -330,14 +335,14 @@ export default function PlaceModal({ isOpen, placeName, onClose }) {
               <div className="pm-addbar">
                 {!showForm ? (
                   <button className="pm-addbtn" onClick={() => setShowForm(true)}>
-                    + Añadir comentario
+                    + Add comment
                   </button>
                 ) : (
                   <form className="pm-form" onSubmit={onSubmitComment}>
                     <div className="pm-form-row">
                       <div className="pm-rate">
   
-<span className="pm-rate-label">Tu rating:</span>
+        <span className="pm-rate-label">Your rate:</span>
 
   <div className="pm-stars-input" role="radiogroup" aria-label="Tu rating">
     {[5,4,3,2,1].map((v) => (
@@ -370,14 +375,14 @@ export default function PlaceModal({ isOpen, placeName, onClose }) {
       setCFiles([]);
     }}
   >
-    Cancelar
+    Cancel
   </button>
 </div>
 </div>
 
                     <textarea
                       className="pm-textarea"
-                      placeholder="Escribe tu comentario…"
+                      placeholder="Write your comment…"
                       value={cText}
                       onChange={(e) => setCText(e.target.value)}
                       maxLength={800}
@@ -394,7 +399,7 @@ export default function PlaceModal({ isOpen, placeName, onClose }) {
                           onChange={onFilesChange}
                           className="pm-fileInput"
                         />
-                        Adjuntar imágenes
+                        Add images
                       </label>
                       {cPrev.length > 0 && (
                         <div className="pm-previews">
@@ -408,17 +413,32 @@ export default function PlaceModal({ isOpen, placeName, onClose }) {
                     </div>
 
                     <button type="submit" className="pm-submit" disabled={submitting}>
-                      {submitting ? "Publicando…" : "Publicar"}
+                      {submitting ? "Charging…" : "Comment"}
                     </button>
                   </form>
                 )}
               </div>
-              {/* ============================================== */}
             </>
           )}
         </div>
       </div>
       </div>
+      {expandedImg && (
+  <div
+    className="pm-img-overlay"
+    onClick={(e) => {
+      e.stopPropagation(); 
+      setExpandedImg(null);
+    }}
+  >
+    <img
+      src={expandedImg}
+      alt="Expanded"
+      className="pm-img-expanded"
+      onClick={(e) => e.stopPropagation()}
+    />
+  </div>
+)}
     </div>
   );
 }

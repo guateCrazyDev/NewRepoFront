@@ -7,6 +7,7 @@ export default function CreateCategory() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [besTime, setTime] = useState("");
+  const [desc, setDesc] = useState("");
   const [imgFile, setImgFile] = useState(null);
   const [imgPreview, setImgPreview] = useState("");
   const [error, setError] = useState("");
@@ -56,6 +57,7 @@ export default function CreateCategory() {
       name: name.trim(),
       bestTime: besTime.trim(),
       location : description.trim(),
+      description : desc.trim(),
     };
 
     try {
@@ -97,8 +99,14 @@ export default function CreateCategory() {
           placeholder="Best Time to visit"
           value={besTime}
           onChange={(e) => setTime(e.target.value)}
-        />
-
+        /> 
+        <textarea
+          className="textareaDesc"
+          placeholder="Description"
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
+          rows={4}              // altura base (puedes ajustarla)
+        ></textarea>
         <label className="fileLabel">
           <input
             type="file"

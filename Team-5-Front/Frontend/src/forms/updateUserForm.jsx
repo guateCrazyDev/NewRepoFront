@@ -1,127 +1,172 @@
-import React, { useState, useEffect } from "react";
-// Asegúrate de que la ruta apunte al archivo donde definiste getUserProfile y updateUserProfile
-import userService from "../service/userService"; 
+// /src/components/UserProfile.jsx
+import { useEffect, useMemo, useState } from "react";
+import { getUser, getImgProfile, setUser, setImgProfile } from "/src/service/AuthService";
+import { updateUserRequest } from "/src/service/UserService";
+import "./Profile.css";
 
-const UpdateUserForm = () => {
-  const [user, setUser] = useState({
-    username: "",
-    newUsername: "",
-    image: "",
-  });
-
-  const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  const defaultImage = "https://via.placeholder.com";
-
-  // 1. CARGAR DATOS INICIALES
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const currentSessionName = localStorage.getItem("username");
-        if (currentSessionName) {
-          // LLAMADA AL SERVICIO (GET)
-          const data = await userService.getUserProfile(currentSessionName);
-          setUser((prev) => ({
-            ...prev,
-            username: data.username,
-            image: data.image,
-          }));
-        }
-      } catch (error) {
-        console.error("Connection error:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadUser();
-  }, []);
-
-  const handleImageChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      setPreview(URL.createObjectURL(selectedFile));
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const currentSessionName = localStorage.getItem("username");
-
-    try {
-      const newUserValue = user.newUsername || user.username;
-
-      await userService.updateUserProfile(
-        currentSessionName,
-        newUserValue,
-        file
-      );
-
-      alert("¡Profile updated!");
-
-      if (user.newUsername) {
-        localStorage.setItem("username", user.newUsername);
-        setUser((prev) => ({
-          ...prev,
-          username: user.newUsername,
-          newUsername: "",
-        }));
-      }
-      setPreview(null);
-    } catch (error) {
-      console.error("Update error:", error);
-      alert("Error updating data");
-    }
-  };
-
-  if (loading) return <p>Loading data...</p>;
-
-  const displayImage =
-    preview ||
-    (user.image ? `data:image/jpeg;base64,${user.image}` : defaultImage);
-
-  return (
-    <div style={containerStyle}>
-      <h3>Profile</h3>
-      <div style={{ marginBottom: "20px" }}>
-        <img src={displayImage} alt="Perfil" style={imageStyle} />
-        <p><strong>{user.username}</strong></p>
-      </div>
-
-      <form onSubmit={handleSubmit}>
-        <div style={inputGroupStyle}>
-          <label>Do you wish to change your username?</label>
-          <input
-            type="text"
-            value={user.newUsername}
-            onChange={(e) => setUser({ ...user, newUsername: e.target.value })}
-            placeholder="Write your new name"
-            style={inputStyle}
-          />
-        </div>
-
-        <div style={inputGroupStyle}>
-          <label>Do you wish to change your profile picture?</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            style={{ width: "100%", marginTop: "5px" }}
-          />
-        </div>
-
-        <button type="submit" style={buttonStyle}>Send</button>
-      </form>
-    </div>
-  );
+const BASE_URL = "http://localhost:8080";
+const formatImagePath = (pic) => {
+  if (!pic) return "";
+  const rawPath = typeof pic === "string" ? pic : pic.path;
+  const cleanPath = (rawPath || "").replace(/^[A-Z]:\/uploads\//i, "");
+  return `${BASE_URL}/uploads/${cleanPath}`;
 };
 
-const containerStyle = { maxWidth: "400px", margin: "auto", padding: "20px", border: "1px solid #ccc", textAlign: "center", borderRadius: "12px" };
-const imageStyle = { width: "120px", height: "120px", borderRadius: "50%", objectFit: "cover", border: "3px solid #007bff" };
-const inputGroupStyle = { marginBottom: "15px", textAlign: "left" };
-const inputStyle = { width: "100%", marginTop: "5px", padding: "8px", boxSizing: "border-box" };
-const buttonStyle = { width: "100%", padding: "10px", backgroundColor: "#28a745", color: "white", border: "none", borderRadius: "5px", cursor: "pointer", fontWeight: "bold" };
+export default function updateUserForm() {
+  const [originalUser, setOriginalUser] = useState("");
+  const [newUser, setNewUser] = useState("");
+  const [currentImg, setCurrentImg] = useState("");
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState("");
 
-export default UpdateUserForm;
+  useEffect(() => {
+    const u = getUser() || "";
+    setOriginalUser(u);
+    setNewUser(u);
+
+    const stored = getImgProfile();
+    if (stored) {
+      const isDataUrl = typeof stored === "string" && stored.startsWith("data:");
+      const isHttp = typeof stored === "string" && /^https?:\/\//.test(stored);
+      setCurrentImg(isDataUrl || isHttp ? stored : formatImagePath(stored));
+    }
+  }, []);
+
+  const onFileChange = (e) => {
+    const f = e.target.files?.[0] || null;
+    setFile(f);
+    if (preview) URL.revokeObjectURL(preview);
+    setPreview(f ? URL.createObjectURL(f) : "");
+  };
+
+  const avatarUrl = useMemo(() => preview || currentImg || "", [preview, currentImg]);
+
+  const onSave = async (e) => {
+    e.preventDefault();
+    try {
+      setSaving(true);
+      setMsg("");
+      const ok = await updateUserRequest(newUser, file, "/user/update");
+      if (ok) {
+        setMsg("Perfil actualizado correctamente.");
+      } else {
+        setMsg("No se pudo actualizar el perfil.");
+      }
+    } catch (err) {
+      setMsg(err?.message || "Error al actualizar el perfil.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Placeholder estático “Favoritos”
+  const favPlaces = [
+    {
+      id: 1,
+      name: "Ibiza",
+      categoryName: "Beach",
+      bestTime: "Summer",
+      rateAve: 4.8,
+      img: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?q=80&w=1600&auto=format&fit=crop",
+    },
+    {
+      id: 2,
+      name: "Kyoto",
+      categoryName: "Historical",
+      bestTime: "Spring",
+      rateAve: 4.7,
+      img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1600&auto=format&fit=crop",
+    },
+    {
+      id: 3,
+      name: "Sahara Dunes",
+      categoryName: "Desert",
+      bestTime: "Autumn",
+      rateAve: 4.5,
+      img: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600&auto=format&fit=crop",
+    },
+    {
+      id: 4,
+      name: "Swiss Alps",
+      categoryName: "Mountain",
+      bestTime: "Winter",
+      rateAve: 4.9,
+      img: "https://images.unsplash.com/photo-1509644851218-985b6f0f85ed?q=80&w=1600&auto=format&fit=crop",
+    },
+  ];
+
+  return (
+    <section className="up-light-bg">
+      <div className="mainContainer">
+      <div className="up-light-overlay" />
+      <div className="up-light-container">
+        {/* Columna izquierda: perfil */}
+        <aside className="up-card up-profile">
+          <div className="up-cover-light">
+            <label className="up-upload-light">
+              <input type="file" accept="image/*" onChange={onFileChange} className="up-fileInput" />
+              <span>Upload new photo</span>
+            </label>
+          </div>
+
+          <div className="up-avatarWrap-light">
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="Avatar" className="up-avatar-light" />
+            ) : (
+              <div className="up-avatar-light fallback">
+                {(originalUser || "U").slice(0, 1).toUpperCase()}
+              </div>
+            )}
+          </div>
+
+          <form className="up-form-light" onSubmit={onSave}>
+            <div className="up-field-light">
+              <label htmlFor="username">Username</label>
+              <input
+                id="username"
+                value={newUser}
+                onChange={(e) => setNewUser(e.target.value)}
+                placeholder="Username"
+                required
+              />
+            </div>
+
+            <button type="submit" className="up-saveBtn-light" disabled={saving}>
+              {saving ? "Loading…" : "Load Changes"}
+            </button>
+
+            {msg && <div className="up-msg-light">{msg}</div>}
+          </form>
+        </aside>
+
+        <main className="up-card up-favs-light">
+          <header className="up-favsHeader-light">
+            <h2>Your favourite places</h2>
+          </header>
+
+          <div className="up-favGrid-light">
+            {favPlaces.map((p) => (
+              <article className="up-favCard-light" key={p.id}>
+                <div className="up-favImgWrap-light">
+                  <img src={p.img} alt={p.name} />
+                  <div className="up-favBadge-light">{p.categoryName}</div>
+                </div>
+                <div className="up-favBody-light">
+                  <h3 className="up-favTitle-light">{p.name}</h3>
+                  <div className="up-favMeta-light">
+                    <span className="chip">{p.bestTime}</span>
+                    <span className="sep">•</span>
+                    <span className="rate">★ {p.rateAve.toFixed(1)}</span>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </main>
+      </div>
+      </div>
+    </section>
+  );
+}

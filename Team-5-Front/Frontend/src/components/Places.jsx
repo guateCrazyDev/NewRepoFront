@@ -3,17 +3,18 @@ import { useParams } from "react-router-dom";
 import { chargeCategory } from "/src/service/CategoryService";
 import { chargePlaces } from "/src/service/PlaceService";
 import PlaceModal from "./PlaceModal";
+import {
+  getRole,
+} from '../storage/StorageService'
 import './Places.css';
 
 const BASE_URL = "http://localhost:8080";
 
-/** Devuelve base64 tal cual si ya es string; si fuese byte[] puedes ampliarlo */
 function bytesToBase64(bytes) {
   if (!bytes) return null;
   if (typeof bytes === "string") return bytes;
 }
 
-/** Normaliza rutas de imagen devueltas por el backend a URLs servibles */
 const formatImagePath = (pic) => {
   if (!pic) return "";
   const rawPath = typeof pic === "string" ? pic : pic.path;
@@ -21,7 +22,6 @@ const formatImagePath = (pic) => {
   return `${BASE_URL}/uploads/${cleanPath}`;
 };
 
-/** Carrusel simple, sin dependencias */
 function PlaceCarousel({ images = [], name = "" }) {
   const [idx, setIdx] = useState(0);
   const hasImages = images && images.length > 0;
@@ -41,11 +41,10 @@ function PlaceCarousel({ images = [], name = "" }) {
 
   return (
     
-<div className="tile" /* grid spans here */>
+<div className="tile">
   <div className="carousel">
     <img src={current} alt={name || "Place"} loading="lazy" />
 
-    {/* Controls */}
     {hasImages && images.length > 1 && (
       <>
         <button className="navBtn prev" aria-label="Anterior" onClick={prev}>‹</button>
@@ -63,7 +62,6 @@ function PlaceCarousel({ images = [], name = "" }) {
       </>
     )}
 
-    {/* Overlay: name only */}
     <div className="overlay">
       <h3>{name || "Place"}</h3>
     </div>
@@ -74,9 +72,8 @@ function PlaceCarousel({ images = [], name = "" }) {
 }
 
 function Places() {
-  // Asegúrate que tu ruta sea <Route path="/places/:categoryName" ... />
   const { categoryName } = useParams();
-
+  const isAdmin = getRole() === "ADMIN";
   const [category, setCategory] = useState(null);
   const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -287,27 +284,46 @@ function Places() {
         <div className="gridContainer">
           {laidOut.map((item) => {
             const images = (item.images && item.images.length > 0) ? item.images : [placeholder];
-            return (
-              <div
-                key={item.id}
-                className="tile"
-                style={{
-                  gridColumn: `${item.colStart} / span ${item.colSpan}`,
-                  gridRow: `${item.rowStart} / span ${item.rowSpan}`,
-                }}
-                onClick={() => openModal(item.name)}
-              >
-                <PlaceCarousel images={images} name={item.name} />
-              </div>
+            return (  
+            <div
+              key={item.id}
+              className="tile"
+              style={{
+                gridColumn: `${item.colStart} / span ${item.colSpan}`,
+                gridRow: `${item.rowStart} / span ${item.rowSpan}`,
+                position: "relative", // ✅ necesario para el botón
+              }}
+              onClick={() => openModal(item.name)}
+            >
+              {/* ✅ Botón Edit solo para ADMIN */}
+              {isAdmin && (
+                <button
+                  className="edit-place-btn"
+                  onClick={(e) => {
+                    e.stopPropagation(); // ✅ evita abrir el modal
+                    console.log("Edit place:", item);
+                    // aquí luego navegas o abres formulario de edición
+                    // navigate(`/home/PForm/${item.id}`)
+                  }}
+                  aria-label={`Edit ${item.name}`}
+                >
+                  ✎ Edit Place
+                </button>
+              )}
+              <PlaceCarousel images={images} name={item.name} />
+            </div>
             );
           })}
         </div>
       </div>
-      <PlaceModal
-        isOpen={modalOpen}
-        placeName={activePlaceName}
-        onClose={closeModal}
-      />
+      {modalOpen && (
+        <PlaceModal
+          key={activePlaceName}
+          isOpen={modalOpen}
+          placeName={activePlaceName}
+          onClose={closeModal}
+        />
+      )}
     </div>
   );
 }

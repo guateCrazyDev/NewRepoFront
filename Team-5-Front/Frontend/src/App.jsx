@@ -4,7 +4,7 @@ import Contactbar from "./guideComponents/Contactbar";
 import CategoryForm from "./forms/CategoryForm";
 import PlaceForm from "./forms/PlaceForm";
 import Place from "./components/Places";
-import UserData from "./forms/UserData";
+import UserData from "./forms/updateUserForm";
 import ErrorPage from "./components/ErrorPage";
 import HomePage from "./components/HomePage";
 import Login from "./auth/Login";
@@ -17,8 +17,8 @@ function App() {
   const location = useLocation();
 
   // Rutas sin Navbar/Footer
-  const noNavbarRoutes = ["/login", "/register"];
-  const noFooterbarRoutes = ["/login", "/register"];
+  const noNavbarRoutes = ["/", "/register"];
+  const noFooterbarRoutes = ["/", "/register"];
 
   const showNavbar = !noNavbarRoutes.includes(location.pathname);
   const showFooterbar = !noFooterbarRoutes.includes(location.pathname);
@@ -29,7 +29,7 @@ function App() {
 
       <div className="content-container">
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/home/profile" element={<UserData />} />

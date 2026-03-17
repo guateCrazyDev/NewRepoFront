@@ -13,7 +13,6 @@ const api = axios.create({
   withCredentials: false, // true solo si tu backend usa cookies
 });
 
-// Interceptor: agrega Bearer JWT si existe
 api.interceptors.request.use(
   (config) => {
     const token = getToken();
@@ -25,7 +24,6 @@ api.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-// Interceptor de respuesta: si 401, limpia sesión y redirige (opcional)
 api.interceptors.response.use(
   (response) => response,
   (error) => {

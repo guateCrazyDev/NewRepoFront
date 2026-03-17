@@ -8,26 +8,11 @@ import {
   clearSession,
 } from '../storage/StorageService'
 
-/**
- * Ajusta esto a tu backend real (sin trailing slash).
- * Si ya estás detrás de un proxy, úsalo tal cual.
- */
 const BASE_URL = 'http://localhost:8080'
 
-/** Quita los slashes finales para evitar // en concatenaciones */
 const trimTrailingSlash = (s = '') => s.replace(/\/+$/, '')
 
-/**
- * Normaliza cualquier "pic" (string u objeto) a una ruta relativa comenzando
- * en "uploads/..." y la convierte a URL absoluta bajo BASE_URL.
- * Casos soportados:
- *  - 'C:\\uploads\\avatar.jpg'
- *  - '\\uploads\\avatar.jpg'
- *  - '/uploads/avatar.jpg'
- *  - 'uploads/avatar.jpg'
- *  - { path: 'C:\\uploads\\avatar.jpg' } | { url: '/uploads/avatar.jpg' }
- *  - http/https (se respeta tal cual)
- */
+
 const toAbsoluteUploadUrl = (pic) => {
   if (!pic) return ''
 
@@ -206,15 +191,21 @@ function GuideNavbar() {
     window.dispatchEvent(new Event('auth:changed'))
     navigate('/')
   }
-
+  
   const isHome = location.pathname === '/home'
   const isPlace = location.pathname.startsWith('/places')
 
   return (
     <div className="div-nav">
-      <nav className={`GuideNavbar-Container ${scrolled ? 'scrolled' : ''}`}>
+      <nav
+        className={`GuideNavbar-Container ${isHome ? 'home' : ''} ${scrolled ? 'scrolled' : ''}`}
+      >
+        {/* LOGO ORIGINAL (Sin cambios) */}
         <div id="title">
-          <img src="/images/SkyRoute.ico" alt="logo" />
+          <img
+            src={isHome && !scrolled ? '/images/LogoW.ico' : '/images/Logo.ico'}
+            alt="logo"
+          />
           <h1>SkyRoute</h1>
         </div>
 
@@ -271,7 +262,7 @@ function GuideNavbar() {
 
               <button
                 className="dropdown-item"
-                onClick={() => go('/home/change-password')}
+                onClick={() => go('/profile/password')}
               >
                 Change Password
               </button>

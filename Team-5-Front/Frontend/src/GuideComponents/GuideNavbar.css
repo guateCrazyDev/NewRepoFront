@@ -1,9 +1,7 @@
 /* ===========================
    NAVBAR WRAPPER
    =========================== */
-
 .div-nav {
-  background-color: transparent;
   transition: 300ms ease-out;
   position: fixed;
   top: 0;
@@ -15,7 +13,6 @@
 /* ===========================
    NAVBAR CONTAINER
    =========================== */
-
 .GuideNavbar-Container {
   width: 100%;
   height: 70px;
@@ -23,179 +20,157 @@
   align-items: center;
   padding-inline: clamp(24px, 8vw, 120px);
   box-sizing: border-box;
-  background: transparent;
-  gap: 24px;
+  gap: 20px;
   transition: background 0.25s ease;
 }
 
-.GuideNavbar-Container.scrolled {
-  background: #ffffff;
+/* COLORES BASE SEGÚN ESTADO */
+.GuideNavbar-Container:not(.home),
+.GuideNavbar-Container.home.scrolled {
+  background: white;
+  color: var(--blue-color);
+}
+
+.GuideNavbar-Container.home:not(.scrolled) {
+  background: transparent;
+  color: white;
 }
 
 /* ===========================
-   LEFT SIDE
+   LEFT SIDE (LOGO & H1 CENTRADO)
    =========================== */
-
 #title {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.8rem;
+}
+
+#title img {
+  width: 2.2rem;
+  height: 2.2rem;
+  object-fit: contain;
 }
 
 #title h1 {
   margin: 0;
-  color: var(--blue-color);
-}
-
-#title img {
-  width: 3.5rem;
-  height: 3.5rem;
-  object-fit: contain;
+  font-size: 1.3rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  color: inherit; /* Hereda del contenedor (blanco o azul) */
 }
 
 /* ===========================
-   RIGHT SIDE
+   BOTONES Y PERFIL (Mismo tamaño de Hover)
    =========================== */
 
+.nav-item,
+.profile-tile {
+  /* Reset de estilos de Link/Button */
+  text-decoration: none !important;
+  color: inherit !important; /* Evita el color morado de los links */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  /* DIMENSIONES IGUALES */
+  height: 38px; /* Altura fija para que ambos hovers midan lo mismo */
+  padding: 0 16px; /* Espaciado lateral generoso */
+  border-radius: 10px;
+
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+/* HOVER: FONDO OSCURO (HOME) */
+.GuideNavbar-Container.home:not(.scrolled) .nav-item:hover,
+.GuideNavbar-Container.home:not(.scrolled) .profile-tile:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* HOVER: FONDO CLARO (SCROLLED / OTROS) */
+.GuideNavbar-Container:not(.home) .nav-item:hover,
+.GuideNavbar-Container.home.scrolled .nav-item:hover,
+.GuideNavbar-Container:not(.home) .profile-tile:hover,
+.GuideNavbar-Container.home.scrolled .profile-tile:hover {
+  background-color: #f1f5f9;
+}
+
+/* ===========================
+   RIGHT SIDE & PROFILE
+   =========================== */
 .right-actions {
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
 }
 
 #div-buttons {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
-
-/* ===========================
-   NAV BUTTONS
-   =========================== */
-
-.nav-item {
-  color: var(--blue-color);
-  text-decoration: none;
-  border-radius: 8px;
-  padding: 8px 12px;
-  transition: background-color 0.2s ease;
-  cursor: pointer;
-  background: transparent;
-  border: none;
-  font: inherit;
-}
-
-.GuideNavbar-Container:not(.scrolled) .nav-item:hover,
-.GuideNavbar-Container:not(.scrolled) .nav-item.active {
-  text-decoration: underline;
-}
-
-.GuideNavbar-Container.scrolled .nav-item:hover {
-  background: #eef2f6;
-}
-
-.GuideNavbar-Container.scrolled .nav-item.active:not(#homeButton) {
-  background: #eef2f6;
-  font-weight: 600;
-}
-
-/* ===========================
-   PROFILE AREA
-   =========================== */
 
 .profile-wrapper {
   position: relative;
   display: flex;
   align-items: center;
+  padding-bottom: 8px; /* Puente para el dropdown */
+  margin-bottom: -8px;
 }
-
-/* Invisible bridge to keep hover active */
-.profile-wrapper::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  right: 0;
-  width: 100%;
-  height: 10px;
-}
-
-/* Profile tile */
-
-.profile-tile {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-}
-
-.username {
-  color: var(--blue-color);
-  font-size: 16px;
-  font-weight: 500;
-}
-
-/* Avatar */
 
 .avatar {
-  width: 38px;
-  height: 38px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   object-fit: cover;
   background: #e6eef6;
 }
 
 .avatar.initials {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: #e6eef6;
-  color: var(--blue-color);
-  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--blue-color);
 }
 
 /* ===========================
-   DROPDOWN
+   DROPDOWN (STABLE)
    =========================== */
-
 .profile-dropdown {
   position: absolute;
   top: 100%;
   right: 0;
-  margin-top: 8px;
-
   min-width: 180px;
-
-  background: #ffffff;
-  border: 1px solid #e6eef6;
-  border-radius: 10px;
-
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-
-  padding: 8px;
-
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 6px;
   opacity: 0;
   visibility: hidden;
-
-  transform: translateY(-6px);
-  transition:
-    opacity 0.15s ease,
-    transform 0.15s ease;
+  transform: translateY(8px);
+  transition: all 0.2s ease;
+  pointer-events: none;
 }
 
-/* Keep dropdown open */
 .profile-wrapper:hover .profile-dropdown {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
+  pointer-events: auto;
 }
-
-/* ===========================
-   DROPDOWN ITEMS
-   =========================== */
 
 .dropdown-item {
   width: 100%;
@@ -205,26 +180,28 @@
   cursor: pointer;
   border-radius: 8px;
   padding: 10px 12px;
-  color: var(--blue-color);
+  color: #334155;
   font-size: 14px;
+  display: block;
+  text-decoration: none;
+  transition: background 0.2s ease;
 }
 
 .dropdown-item:hover {
-  background: #eef2f6;
+  background: #f1f5f9;
 }
 
 .dropdown-item.danger {
-  color: #b00020;
+  color: #ef4444;
 }
 
 .dropdown-item.danger:hover {
-  background: #fdeaea;
+  background: #fef2f2;
 }
 
 /* ===========================
    RESPONSIVE
    =========================== */
-
 @media (max-width: 600px) {
   .username {
     display: none;

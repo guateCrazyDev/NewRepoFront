@@ -82,4 +82,14 @@ export const getUserInfo = async username => {
   return data
 }
 
+export const changePassword = async (username, oldPassword, newPassword) => {
+  const { data } = await api.put('/auth/change-password', {
+    username,
+    oldPassword,
+    newPassword
+  })
+
+  return data
+}
+
 export default userService;

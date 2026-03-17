@@ -2,6 +2,8 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import GuideNavbar from "./guideComponents/GuideNavbar";
 import Contactbar from "./guideComponents/Contactbar";
 import CategoryForm from "./forms/CategoryForm";
+import ProfielPass from "./forms/ProfilePassword";
+import EditCategoryForm from "./forms/EditCategoryForm";
 import PlaceForm from "./forms/PlaceForm";
 import Place from "./components/Places";
 import UserData from "./forms/updateUserForm";
@@ -31,9 +33,10 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/home/profile" element={<UserData />} />
-          <Route path="/places/:categoryName" element={<Place />} />
+          <Route path="/home" element={<ProtectedRoute allowedRoles={["ADMIN","USER"]}><HomePage /></ProtectedRoute>} />
+          <Route path="/home/profile" element={<ProtectedRoute allowedRoles={["ADMIN","USER"]}><UserData /></ProtectedRoute>} />
+          <Route path="/places/:categoryName" element={<ProtectedRoute allowedRoles={["ADMIN","USER"]}><Place /></ProtectedRoute>} />
+          <Route path="/profile/password" element={<ProtectedRoute allowedRoles={["ADMIN","USER"]}><ProfielPass /></ProtectedRoute>} />
           <Route path="/:slug/*" element={<ErrorPage />} />
           <Route path="/:slug" element={<Navigate to="/home" replace />} />
 
@@ -43,12 +46,19 @@ function App() {
               <ProtectedRoute allowedRoles={["ADMIN"]}>
                 <CategoryForm />
               </ProtectedRoute>
-            }
+            }EditCategoryForm
           /><Route
             path="/home/PForm/:categoryName"
             element={
               <ProtectedRoute allowedRoles={["ADMIN"]}>
                 <PlaceForm />
+              </ProtectedRoute>
+            }
+          /><Route
+            path="/home/edit/category"
+            element={
+              <ProtectedRoute allowedRoles={["ADMIN"]}>
+                <EditCategoryForm />
               </ProtectedRoute>
             }
           />

@@ -248,19 +248,30 @@ function GridTemplate() {
               gridRow: `${item.rowStart} / span ${item.rowSpan}`,
             }}
           > 
+          <div className="buttonsAdmin">
           {isAdmin && (
             <button
               className="edit-category-btn"
               onClick={(e) => {
                 e.stopPropagation();
-                console.log("Edit category:");
-                // luego puedes navegar a:
-                // navigate(`/home/CForm/${category.id}`)
+                navigate("/home/edit/category")
               }}
             >
               ✎ Edit Category
             </button>
           )}
+          {isAdmin && (
+            <button
+              className="edit-category-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/home/edit/category")
+              }}
+            >
+              X
+            </button>
+          )}
+          </div>
             <Link to={`/places/${item.title}`}>
               <img
                 src={item.url || placeholder}

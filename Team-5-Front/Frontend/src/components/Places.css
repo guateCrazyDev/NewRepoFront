@@ -11,25 +11,37 @@
   object-position: top center;
 }
 
-.edit-place-btn {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  z-index: 5;
 
-  background: rgba(0, 0, 0, 0.65);
-  color: #fff;
+.buttonsAdmin {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+
+  display: flex;
+  gap: 10px;
+}
+
+.edit-category-btn {
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
   border: none;
   border-radius: 6px;
   padding: 6px 8px;
   cursor: pointer;
-
   font-size: 14px;
-  line-height: 1;
 }
 
-.edit-place-btn:hover {
-  background: rgba(0, 0, 0, 0.85);
+.edit-category-btn:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.edit-category-btn.delete {
+  background: rgba(220, 38, 38, 0.8);
+}
+
+.edit-category-btn.delete:hover {
+  background: rgba(220, 38, 38, 1);
 }
 .mainContainer {
   margin: 0;

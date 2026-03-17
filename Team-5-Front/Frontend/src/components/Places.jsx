@@ -296,20 +296,53 @@ function Places() {
               onClick={() => openModal(item.name)}
             >
               {/* ✅ Botón Edit solo para ADMIN */}
-              {isAdmin && (
-                <button
-                  className="edit-place-btn"
-                  onClick={(e) => {
-                    e.stopPropagation(); // ✅ evita abrir el modal
-                    console.log("Edit place:", item);
-                    // aquí luego navegas o abres formulario de edición
-                    // navigate(`/home/PForm/${item.id}`)
-                  }}
-                  aria-label={`Edit ${item.name}`}
-                >
-                  ✎ Edit Place
-                </button>
-              )}
+              <div className="buttonsAdmin">
+          {isAdmin && (
+            <button
+              className="edit-category-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/home/edit/category")
+              }}
+            >
+              ✎ Edit Category
+            </button>
+          )}
+          {isAdmin && (
+            <button
+              className="edit-category-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/home/edit/category")
+              }}
+            >
+              X
+            </button>
+          )}
+          </div><div className="buttonsAdmin">
+          {isAdmin && (
+            <button
+              className="edit-category-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/home/edit/category")
+              }}
+            >
+              ✎ Edit Category
+            </button>
+          )}
+          {isAdmin && (
+            <button
+              className="edit-category-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/home/edit/category")
+              }}
+            >
+              X
+            </button>
+          )}
+          </div>
               <PlaceCarousel images={images} name={item.name} />
             </div>
             );

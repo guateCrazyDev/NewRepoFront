@@ -1,17 +1,27 @@
-import "./HomePage.css";
-import GridTemplate from "./GridTemplate";
+import { useEffect, useState } from 'react'
+import './HomePage.css'
+import GridTemplate from '../components/GridTemplate'
 
 function HomePage() {
+
   return (
     <div className="home-page">
-      <div className="template">
-        <div className="image-div">
-          <img src="/images/mainPage.jpg" alt="hero" />
+      <section className="hero">
+        <img src="/images/HomeImage.jpg" alt="hero" />
+
+        <div className="hero-overlay">
+          <h1>Travel around the world</h1>
+          <p>Discover your next destination</p>
+
+          <div className="search-box">
+            <input type="text" placeholder="Search a Landscape" />
+            <button>Search</button>
+          </div>
         </div>
-      </div>
-        <GridTemplate />
+      </section>
+      <GridTemplate/>
     </div>
-  );
+  )
 }
 
-export default HomePage;
+export default HomePage
